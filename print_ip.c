@@ -1,15 +1,10 @@
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include "main.h"
 
-void printIPAddress(char* domain) {
+void print_ip(char* domain) {
     struct addrinfo hints, *res, *p;
     int status = 1;
     char ipstr[INET6_ADDRSTRLEN];

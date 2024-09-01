@@ -1,19 +1,12 @@
 
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <arpa/inet.h>
 #include <string.h>
-#include "main.h"
-
-
 
 
 void connect_domain(char* domain) {
+  printf("connect domain: %s", domain);
   struct addrinfo hints, *res;
   int sockfd;
 
@@ -39,4 +32,5 @@ void connect_domain(char* domain) {
   if (status == 1) { 
       fprintf(stderr, "error getting addr info: %s\n", gai_strerror(status));
   }
+
 }
