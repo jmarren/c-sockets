@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <stdlib.h>
+#include "parse_request.h"
 
 #define BACKLOG 10
 #define PORT "4040"
@@ -159,7 +160,11 @@ int serverfunc() {
 
       buffer[bytes_received] = '\0';
 
-      printf("buffer received:  %s", buffer);
+      // printf("buffer received:  %s", buffer);
+      
+      parse_request(buffer);
+
+
 
 
 
@@ -171,8 +176,8 @@ int serverfunc() {
       char *break_line = "\r\n";
       sprintf(content_length, "Content-Length: %i\r\n", body_size);
 
-      printf("content length: %s", content_length);
-      
+      // printf("content length: %s", content_length);
+ 
       char *response = malloc(strlen(http_status) + strlen(content_type) + strlen(break_line) + strlen(body) + strlen(content_length) + strlen(body) + 1);
       strcpy(response, http_status);
       strcat(response, content_type);
@@ -180,11 +185,10 @@ int serverfunc() {
       strcat(response, break_line);
       strcat(response, body);
 
-      printf("%s", response);
-      
+      // printf("%s", response);
+ 
       int len, bytes_sent;
 
-        
 
       len = strlen(response);
       bytes_sent = send(new_fd, response, len, 0);
