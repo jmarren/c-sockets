@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "parse_request.h"
 #include <stdlib.h>
+#include <string.h>
 
 
 
@@ -25,16 +26,30 @@ void parse_request(char* buffer) {
   printf("$$$$$ Parsing Request $$$$$$ \n");
   get_method(&request, buffer, &position);
   printf("method: %d\n", request.method);
-  position++;
-  position++;
+  move_to_next_non_space(buffer, &position);
+  // position++;
+  // position++;
   get_path(&request, buffer, &position);
 
+  printf("path_size: %d\n", request.path_size);
   printf("paths: \n");
   for (int i = 0; i < request.path_size; i++) {
-    printf("%s\n", *request.path);
+    printf("%s\n", request.path[i]);
   } 
 
+  free_paths(&request);
+
   return;
+}
+
+void move_to_next_non_space(char* buffer, int* position) {
+  char curr = buffer[*position];
+  while (curr == ' ') {
+    *position = *position + 1;
+    printf("moved to %d\n", *position);
+    curr = buffer[*position];
+  }
+  printf("buffer[*position]: %c\n", buffer[*position]);
 }
 
 
@@ -91,19 +106,42 @@ void get_method(Request* request, char* buffer, int* position) {
 
 void get_path(Request* request, char* buffer, int* position) {
   if (buffer[*position] == ' ') return;
-  char* param = &buffer[*position];
-  char* head = param;
-
+  // char* param = &buffer[*position];
+  char* head = &buffer[*position];
+  *position = *position + 1;
+  int param_length = 0;
+  
+  
   while (buffer[*position] != '/' && buffer[*position] != ' ') {
     printf("buffer[*position]: %c\n", buffer[*position]);
-    *param = buffer[*position];
-    param++;
+    param_length++;
     *position = *position + 1;
   }
-  *param = '\0';
-  request->path = realloc(request->path, sizeof(char*) * request->path_size);
-  (request->path)[request->path_size] = head;
+  
+  size_t param_size = (param_length + 1) * sizeof(char);
+  char* param = (char*)malloc(param_size);
+
+  strncpy(param, head, param_size );
+
+  printf("buffer[*position]: %c\n", buffer[*position]);
+
+
+  request->path = (char**)realloc(request->path, sizeof(char**) * request->path_size);
+  (request->path)[request->path_size] = param;
   request->path_size++;
+
+  printf("ending get_path(): buffer[*position]: %c\n", buffer[*position]);
+  if (buffer[*position] == '/') {
+    printf("getting next param!\n");
+    get_path(request, buffer, position);
+  }
+}
+
+
+void free_paths(Request* request) {
+  for (int i = 0; i < request->path_size; i++) {
+    free(request->path[i]);
+  }
 }
 
 

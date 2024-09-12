@@ -22,10 +22,11 @@ typedef struct Request {
   int path_size;
 } Request;
 
+void move_to_next_non_space(char* buffer, int* position);
 void init_request(Request* request);
 void get_method(Request* request, char* buffer, int* position);
 void parse_request(char* buffer);
 void get_path(Request* request, char* buffer, int* position);
-
+void free_paths(Request* request);
 
 #endif
